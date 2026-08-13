@@ -27,22 +27,21 @@ else
     exit 1
 fi
 
-# --- Create trycloudflare tunnel ---
+# --- Create trycloudflare quick tunnel ---
+# Quick tunnels auto-generate a random *.trycloudflare.com URL (no --hostname)
 echo "Creating trycloudflare tunnel..."
-# Generate a random subdomain
-RANDOM_SUBDOMAIN=$(cat /dev/urandom | tr -dc 'a-z0-9' | head -c 8)
 
-# Start cloudflared tunnel in background, capturing the URL
-cloudflared tunnel --url http://localhost:$PORT --hostname "$RANDOM_SUBDOMAIN--eaglecraft.trycloudflare.com" > "$EAGLECRAFT_DIR/tunnel.log" 2>&1 &
+# Start cloudflared tunnel in background, capturing output
+cloudflared tunnel --url http://localhost:$PORT > "$EAGLECRAFT_DIR/tunnel.log" 2>&1 &
 TUNNEL_PID=$!
 
 # Wait for tunnel to be established and extract the URL
 echo "Waiting for tunnel..."
 TUNNEL_URL=""
-for i in $(seq 1 15); do
+for i in $(seq 1 20); do
     sleep 1
     # Look for the trycloudflare URL in the log
-    TUNNEL_URL=$(grep -oE 'https://[a-z0-9-]+\.trycloudflare\.com' "$EAGLECRAFT_DIR/tunnel.log" | head -1 || true)
+    TUNNEL_URL=$(grep -oE 'https://[a-z0-9-]+\.trycloudflare\.com' "$EAGLECRAFT_DIR/tunnel.log" 2>/dev/null | tail -1 || true)
     if [ -n "$TUNNEL_URL" ]; then
         break
     fi
@@ -67,6 +66,3 @@ else
     echo "Check tunnel.log:"
     cat "$EAGLECRAFT_DIR/tunnel.log"
 fi
-
-# Keep the script running so the PIDs aren't orphaned
-wait $TUNNEL_PID 2>/dev/null || true
