@@ -51,7 +51,7 @@ The tunnel forwards HTTP traffic from the Cloudflare edge to port 8080 on the VP
 
 ## Notes
 
-- The trycloudflare URL is random and changes each time you run `start.sh`. Bookmark it for the session.
+- The trycloudflare URL is random and changes each time you run `start.sh`.
 - To stop Eaglecraft: `pkill -f "cloudflared tunnel"` and `pkill -f "http.server 8080"`
-- Eaglecraft 1.12.2 (u3, WASM-GC) is the latest official release as of 2026.
-- Server list and settings are configured inside the HTML file itself after extraction.
+- Eaglecraft 1.12.2 (u3, WASM-GC) is the latest official release.
+- The `index.html` file created by setup.sh redirects to the main Eaglecraft HTML file for proper full-screen rendering. Do **not** wrap it in an iframe — Eaglecraft handles its own full-size rendering.
