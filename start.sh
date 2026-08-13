@@ -28,7 +28,7 @@ else
 fi
 
 # --- Create trycloudflare quick tunnel ---
-# Quick tunnels auto-generate a random *.trycloudflare.com URL (no --hostname)
+# Quick tunnels auto-generate a random *.trycloudflare.com URL
 echo "Creating trycloudflare tunnel..."
 
 # Start cloudflared tunnel in background, capturing output
