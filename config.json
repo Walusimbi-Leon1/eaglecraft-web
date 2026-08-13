@@ -1,0 +1,9 @@
+{
+    "name": "Eaglecraft 1.12.2",
+    "version": "1.12.2",
+    "servers": [
+        {"name": "Minemen", "address": "minemen.club"},
+        {"name": "Jart", "address": "mc.jart.codes"},
+        {"name": "Eagler", "address": "eaglerbriggs.mcc.gg"}
+    ]
+}
