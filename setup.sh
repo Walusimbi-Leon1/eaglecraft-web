@@ -41,42 +41,47 @@ curl -L "$EAGLECRAFT_DOWNLOAD_URL" -o /tmp/eaglecraft.zip
 unzip -o /tmp/eaglecraft.zip -d "$EAGLECRAFT_DIR"
 rm -f /tmp/eaglecraft.zip
 
-# --- Create an index.html entry point if not present ---
-if [ ! -f "$EAGLECRAFT_DIR/index.html" ]; then
-    # Try to find the main HTML file from the zip
-    MAIN_HTML=""
-    for f in "$EAGLECRAFT_DIR"/*.html; do
-        if [ -f "$f" ]; then
-            MAIN_HTML="$(basename "$f")"
-            break
-        fi
-    done
-
-    if [ -z "$MAIN_HTML" ]; then
-        echo "WARNING: No HTML file found in Eaglecraft download."
-        echo "You may need to check the extracted files in $EAGLECRAFT_DIR"
+# --- Create index.html that directly loads Eaglecraft in full-screen ---
+# The Eaglecraft HTML file is designed to be served as the main page,
+# NOT embedded in an iframe. We create an index.html that redirects
+# to the Eaglecraft HTML file so the game renders at full size.
+MAIN_HTML=""
+for f in "$EAGLECRAFT_DIR"/*.html; do
+    if [ -f "$f" ]; then
+        MAIN_HTML="$(basename "$f")"
+        break
     fi
+done
 
-    cat > "$EAGLECRAFT_DIR/index.html" << HTMLEOF
+cat > "$EAGLECRAFT_DIR/index.html" << HTMLEOF
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Eaglecraft Web</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>body { margin: 0; padding: 0; overflow: hidden; }</style>
+    <meta http-equiv="refresh" content="0; url=./${MAIN_HTML:-eaglecraft.html}">
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            background: #000;
+        }
+    </style>
 </head>
 <body>
-    <iframe src="${MAIN_HTML:-eaglecraft.html}" width="100%" height="100%" frameborder="0"></iframe>
+    <!-- Redirect to Eaglecraft — it handles full-screen rendering natively -->
+    <script>
+        window.location.href = "./${MAIN_HTML:-eaglecraft.html}";
+    </script>
 </body>
 </html>
 HTMLEOF
-fi
 
 echo ""
 echo "Setup complete!"
 echo "Files downloaded to: $EAGLECRAFT_DIR"
 echo "To start: bash start.sh"
 echo ""
-echo "This serves Eaglecraft 1.12.2 in your browser using the VPS CPU/network."
-echo "Open the trycloudflare URL that start.sh generates."
+echo "Open the trycloudflare URL in your browser to play Minecraft 1.12.2."
